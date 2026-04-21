@@ -1,34 +1,63 @@
-# Analisis-Sentimen-Game-RPG-Wuthering-Waves
-🌊 Wuthering Waves Sentiment Analysis Indonesian Play Store Reviews
-Proyek ini merupakan sistem analisis sentimen otomatis yang dirancang untuk mengevaluasi opini pemain game Wuthering Waves pada platform Google Play Store (Region Indonesia). Dengan menggunakan lebih dari 10.000 sampel data, proyek ini mengomparasi berbagai algoritma Machine Learning dan Deep Learning untuk mendapatkan akurasi klasifikasi terbaik.
+# 🌊 Wuthering Waves Sentiment Analysis (Indonesian Reviews)
 
-🎯 Fitur & Keunggulan
-Large-Scale Scraping: Mengambil 10.000 komentar terbaru menggunakan google-play-scraper.
+Proyek ini berfokus pada **Analisis Sentimen** pengguna game *Wuthering Waves* di platform Google Play Store menggunakan berbagai pendekatan *Machine Learning* dan *Deep Learning*. Dengan dataset sebanyak **10.000 ulasan**, proyek ini mengevaluasi persepsi pemain dalam Bahasa Indonesia.
 
-Advanced Preprocessing: Pembersihan teks otomatis, penanganan slang (bahasa gaul), normalisasi kata, dan penghapusan duplikasi.
+---
 
-Data Balancing: Menggunakan RandomOverSampler untuk menangani ketidakseimbangan kelas (imbalance dataset).
+## 📊 Hasil Percobaan & Optimasi Model
 
-Multi-Scheme Experiment: Perbandingan performa antara SVM, Random Forest, dan MLP (Deep Learning).
+Berikut adalah ringkasan performa dari tiga skema pengujian yang dilakukan untuk memenuhi kriteria akurasi tinggi dan klasifikasi multi-kelas (Positif, Netral, Negatif).
 
-High Accuracy: Mencapai akurasi pengujian di atas 92% melalui optimasi hyperparameter dan TF-IDF N-Gram.
+| Skema | Algoritma Pelatihan | Ekstraksi Fitur | Pembagian Data | Akurasi Testing | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Skema 1** | **SVM (RBF Kernel)** | TF-IDF (1,3) | 80% : 20% | **96.35%** | ✅ Passed |
+| **Skema 2** | **Random Forest** | TF-IDF (1,3) | 80% : 20% | **96.43%** | ✅ Best |
+| **Skema 3** | **MLP (Deep Learning)** | TF-IDF (1,3) | 70% : 30% | **93.20%** | ✅ Passed |
 
-📊 Hasil Optimasi Model
-Berdasarkan eksperimen pada 10.000 sampel data, berikut adalah performa dari tiga skema yang diuji:
-Skema,Algoritma,Split Data,Akurasi
-Skema 1,SVM (RBF Kernel),80/20,96.35%
-Skema 2,Random Forest,80/20,96.43%
-Skema 3,MLP (Deep Learning),70/30,93.20%
+> **Note:** Akurasi di atas menunjukkan bahwa model mampu mengenali pola bahasa gaul (*slang*) dan ulasan teknis pemain dengan sangat baik setelah dilakukan optimasi pada tahap *preprocessing*.
 
-🛠️ Alur Kerja Teknis
-Scraping: Pengambilan 10.000 ulasan menggunakan google-play-scraper.
+---
 
-Preprocessing: - Normalisasi kata slang (contoh: "yg" -> "yang", "ampas" -> "buruk").
+## 🛠️ Fitur & Metodologi
 
-Streamlining karakter berulang (contoh: "bagusss" -> "bagus").
+### 1. Scraping & Dataset
+- **Sumber Data:** Google Play Store (App ID: `com.kurogame.wutheringwaves.global`).
+- **Jumlah Data:** 10,000 sampel ulasan terbaru.
+- **Keseimbangan Data:** Menggunakan `RandomOverSampler` untuk menangani *class imbalance* agar model adil dalam memprediksi kelas minoritas.
 
-Pembersihan simbol dan angka melalui Regex.
+### 2. Preprocessing & Normalisasi
+Model dilengkapi dengan fungsi pembersihan teks yang mencakup:
+- **Normalisasi Slang:** Mengubah kata tidak baku (contoh: *yg, gak, ampas, bgt*) menjadi kata baku.
+- **Regex Cleaning:** Menghapus karakter berulang, simbol, dan angka yang tidak relevan.
+- **Filtering:** Menghapus data duplikat untuk menjaga integritas pengujian.
 
-Balancing: Menggunakan RandomOverSampler untuk memastikan model tidak bias terhadap kelas mayoritas.
+### 3. Ekstraksi Fitur
+- **TF-IDF Vectorizer:** Digunakan dengan parameter `ngram_range=(1, 3)` dan `max_features=8000` untuk menangkap konteks kata yang lebih luas (unigram, bigram, dan trigram).
 
-Feature Extraction: TF-IDF Vectorizer dengan rentang n-gram (1, 3) untuk menangkap konteks frasa.
+---
+
+## 🧪 Uji Coba Inferensi (Output)
+
+Hasil prediksi model terhadap input teks baru:
+
+| Teks Ulasan | Prediksi Sentimen |
+| :--- | :--- |
+| "Gamenya ampas banget, sering lag dan gacha buruk!" | **Negatif** |
+| "Grafiknya mantap tapi gameplay biasa aja" | **Positif** (Bias) |
+| "Wuthering Waves seru banget, grafisnya luar biasa!" | **Positif** |
+
+---
+
+## ⚠️ Batasan Model (Kekurangan)
+
+Meskipun mencapai akurasi tinggi, model ini memiliki beberapa keterbatasan:
+- **Ambiguitas Nilai Tengah:** Model cenderung condong ke arah positif jika terdapat kata pujian yang kuat, meskipun kalimat tersebut berisi keluhan (sentimen campuran).
+- **Sarkasme:** Belum mampu mendeteksi sarkasme secara mendalam karena keterbatasan representasi makna pada TF-IDF.
+- **Kamus Slang Statis:** Penanganan bahasa gaul bergantung pada kamus manual yang perlu diperbarui secara berkala.
+
+---
+
+## ⚙️ Cara Menjalankan
+1. Install dependensi:
+   ```bash
+   pip install pandas numpy scikit-learn google-play-scraper imbalanced-learn
